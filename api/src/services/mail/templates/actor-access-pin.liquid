@@ -1,0 +1,26 @@
+{% layout "base" %} {% block content %}
+
+<h1>Pin Access Granted to {{ projectName }}</h1>
+
+<p style="padding-bottom: 30px">
+  You have been granted PIN access to <i>{{ projectName }}</i> platform.
+  Please use the PIN below to access the project:
+</p>
+
+<span
+  style="
+    font-size: 16px;
+    font-weight: 600;
+    color: #ffffff;
+    background: #171717;
+    border: 1px solid #ffffff;
+    border-radius: 8px;
+    padding: 16px;
+    text-align: center;
+    word-wrap: break-word;
+  "
+>
+  <code style="font-family: 'Courier New', Courier, monospace;">{{ pinCode }}</code>
+</span>
+
+{% endblock %}
