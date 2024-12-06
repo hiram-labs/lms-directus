@@ -1,5 +1,5 @@
 {
-	"name": "directus-lms-extensions",
+	"name": "lms",
 	"description": "Adds extra functionality to directus when using it as an lms",
 	"icon": "extension",
 	"version": "1.0.0",
@@ -34,8 +34,8 @@
 		"add": "directus-extension add"
 	},
 	"devDependencies": {
-		"@directus/extensions-sdk": "12.1.4",
-		"@types/node": "^22.10.1",
-		"typescript": "^5.7.2"
+		"@directus/extensions-sdk": "workspace:*",
+		"@types/node": "18.19.50",
+		"typescript": "5.6.2"
 	}
 }
