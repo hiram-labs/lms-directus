@@ -2,12 +2,12 @@ import { createHash } from 'crypto';
 import { defineHook } from '@directus/extensions-sdk';
 import { EventContext } from '@directus/types';
 
-function generateUnique6DigitPinFromUuid(uuid: string): number {
+function generateUnique6DigitPin(id: string): number {
 	const salt = Math.floor(Math.random() * 1000000);
-	const saltedUuid = uuid.replace(/-/g, '') + salt.toString();
-	const hash = createHash('sha256').update(saltedUuid).digest('hex');
-	const uuidHash = parseInt(hash.slice(0, 8), 16);
-	const sixDigitNumber = (uuidHash % 900000) + 100000;
+	const saltedId = id.replace(/-/g, '') + salt.toString();
+	const hash = createHash('sha256').update(saltedId).digest('hex');
+	const idHash = parseInt(hash.slice(0, 8), 16);
+	const sixDigitNumber = (idHash % 900000) + 100000;
 	return sixDigitNumber;
 }
 
@@ -27,13 +27,13 @@ async function getUserById(database: any, userId: string) {
 
 async function sendEmail(mailServiceInstance: any, to: string, templateData: Record<string, any>) {
 	const EMAIL_SUBJECT = 'Xrtemis Access';
-	const TEMPLATE_NAME = 'actor-access-pin';
+	const EMAIL_TEMPLATE_NAME = 'actor-access-pin';
 
 	const mailOptions = {
 		to,
 		subject: EMAIL_SUBJECT,
 		template: {
-			name: TEMPLATE_NAME,
+			name: EMAIL_TEMPLATE_NAME,
 			data: templateData,
 		},
 	};
@@ -54,7 +54,8 @@ export default defineHook(({ filter, action }, { services, getSchema, database, 
 		}
 
 		if (!payload.access_pin) {
-			const pinAccess = generateUnique6DigitPinFromUuid(userId);
+			// user_id may be uuid string or object if the user is created inline while creating this item
+			const pinAccess = generateUnique6DigitPin(JSON.stringify(userId));
 			payload.access_pin = pinAccess;
 			logger?.debug(`Auto generated access_pin: ${pinAccess} for user_id: ${userId}`);
 		}
@@ -73,11 +74,21 @@ export default defineHook(({ filter, action }, { services, getSchema, database, 
 		}
 
 		try {
-			const { email: receiverEmail } = await getUserById(database, userId);
+			let receiverEmail;
+
+			// user_id may be uuid string or object if the user is created inline while creating this item
+			if (typeof userId === 'string') {
+				const { email } = await getUserById(database, userId);
+				receiverEmail = email;
+			} else {
+				const { email } = userId;
+				receiverEmail = email;
+			}
+
 			const pinCode = meta.payload?.access_pin;
 
-			if (!receiverEmail || !pinCode) {
-				logger.error('Missing email or pinCode in context payload');
+			if (!pinCode || !receiverEmail) {
+				logger.error('Missing pinCode or email in context payload');
 				logger.error(meta.payload);
 				return;
 			}
