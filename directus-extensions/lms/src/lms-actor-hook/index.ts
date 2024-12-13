@@ -1,6 +1,5 @@
 import { createHash } from 'crypto';
 import { defineHook } from '@directus/extensions-sdk';
-import { EventContext } from '@directus/types';
 
 function generateUnique6DigitPin(id: string): number {
 	const salt = Math.floor(Math.random() * 1000000);
@@ -46,7 +45,7 @@ export default defineHook(({ filter, action }, { services, getSchema, database, 
 		throw new Error('Updates NOT allowed - Delete and recreate item');
 	});
 
-	filter('lms_actor_access.items.create', async (payload: any, _meta: Record<string, any>, _context: EventContext) => {
+	filter('lms_actor_access.items.create', async (payload: any, _meta: Record<string, any>, _context: unknown) => {
 		const userId = payload?.user_id;
 
 		if (!userId) {
@@ -63,7 +62,7 @@ export default defineHook(({ filter, action }, { services, getSchema, database, 
 		return payload;
 	});
 
-	action('lms_actor_access.items.create', async (meta: Record<string, any>, _context: EventContext) => {
+	action('lms_actor_access.items.create', async (meta: Record<string, any>, _context: unknown) => {
 		const schema = await getSchema();
 		const mailService = new services.MailService({ schema });
 
