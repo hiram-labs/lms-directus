@@ -907,6 +907,9 @@ importers:
 
   directus-extensions/lms:
     devDependencies:
+      '@directus/extensions':
+        specifier: workspace:*
+        version: link:../../packages/extensions
       '@directus/extensions-sdk':
         specifier: workspace:*
         version: link:../../packages/extensions-sdk
