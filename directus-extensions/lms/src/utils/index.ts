@@ -1,5 +1,5 @@
 export async function sendAccessPinEmail(mailServiceInstance: any, to: string, templateData: Record<string, any>) {
-	const EMAIL_SUBJECT = 'Access granted to Xrtemis';
+	const EMAIL_SUBJECT = 'Access granted to skillspacexr';
 	const EMAIL_TEMPLATE_NAME = 'actor-access-pin';
 
 	const mailOptions = {
